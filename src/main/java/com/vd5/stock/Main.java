@@ -6,14 +6,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+
+import java.io.File;
 
 public class Main extends Application {
     private static Scheduler scheduler;
@@ -21,7 +22,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/fxml/sample.fxml"));
-        // Parent root = FXMLLoader.load(getClass().getResource("/fxml/sample.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 300, 275));
@@ -31,7 +31,7 @@ public class Main extends Application {
 
     @Override
     public void stop() throws Exception {
-        System.out.println("Exiting ...");
+        Log.info("StockDriver", "Exiting ...");
         if (scheduler != null) {
             scheduler.shutdown();
         }
@@ -40,24 +40,20 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        RTConfig.init();
         StockDriver.init();
         try {
             scheduler = StdSchedulerFactory.getDefaultScheduler();
-            JobDetail job = JobBuilder.newJob(StockJob.class).withIdentity("job1", "group1").build();
-            //SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder.newTrigger().withIdentity("trigger1", "group1").startNow().build();
-            CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity("job1", "group1")
-                    .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ?")).build();
+            JobDetail job = JobBuilder.newJob(StockJob.class).withIdentity(RTConfig.getJobName(), RTConfig.getGroupName()).build();
+            CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(RTConfig.getJobName(), RTConfig.getGroupName())
+                    .withSchedule(CronScheduleBuilder.cronSchedule(RTConfig.getCronString())).build();
             scheduler.scheduleJob(job, cronTrigger);
             scheduler.start();
-            //
         } catch (SchedulerException e) {
             e.printStackTrace();
-            System.out.println("Exception ...");
+            Log.error("Exception", e.getMessage());
         }
-
 
         launch(args);
     }
-
-
 }

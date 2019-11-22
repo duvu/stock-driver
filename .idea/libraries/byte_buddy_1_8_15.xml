@@ -17,6 +17,10 @@
       <root url="jar://$PROJECT_DIR$/libs/quartz-2.3.0-SNAPSHOT.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/slf4j-api-1.7.7.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/slf4j-log4j12-1.7.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/commons-configuration2-2.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/commons-logging-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/commons-beanutils-1.9.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/commons-text-1.8.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
